@@ -1,9 +1,10 @@
 from flask import Flask, render_template, make_response, request, redirect
 from data import db_session
+from data.db_session import create_session
 from data.users import User
 from data.products import Products
 import datetime
-from data.login_form import LoginForm, RegisterForm
+from data.login_form import LoginForm, RegisterForm, AddProduct
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
@@ -21,17 +22,6 @@ def main():
 def load_user(user_id):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
-
-
-@app.route("/")
-def index():
-    db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-        products = db_sess.query(Products).filter(
-            (Products.user == current_user) | (Products.is_private != True))
-    else:
-        products = db_sess.query(Products).filter(Products.is_private != True)
-    return render_template("index.html")
 
 
 @app.route("/cookie_test")
@@ -92,7 +82,49 @@ def reqister():
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).filter(Products.user_id == current_user.id)
+    if current_user.is_authenticated:
+        return render_template('home.html', name=current_user.name, email=current_user.email,
+                               about=current_user.about, products=products)
+    else:
+        return redirect('/')
+
+
+@app.route("/")
+def index():
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).filter(Products.is_private != True)
+    return render_template("base.html", products=products)
+
+
+@app.route('/trousers')
+def trousers():
+    return '''fsfds'''
+
+
+@app.route('/add_product', methods=['GET', 'POST'])
+def add_product():
+    form = AddProduct()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        product = Products(
+            title=form.title.data,
+            content=form.content.data,
+            price=form.price.data,
+            category=form.category.data,
+            user_id=current_user.id
+        )
+        db_sess.add(product)
+        db_sess.commit()
+        return redirect('/home')
+    return render_template('add_product.html', title='Добавьте новый продукт', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 if __name__ == '__main__':
