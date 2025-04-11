@@ -3,6 +3,7 @@ from data import db_session
 from data.db_session import create_session
 from data.users import User
 from data.products import Products
+from data.liked_products import Liked
 import datetime
 from data.login_form import LoginForm, RegisterForm, AddProduct
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -92,10 +93,10 @@ def home():
 
 
 @app.route("/")
-def index():
+def main_page():
     db_sess = db_session.create_session()
     products = db_sess.query(Products).filter(Products.is_private != True)
-    return render_template("base.html", products=products)
+    return render_template("main_page.html", all_products=products)
 
 
 @app.route('/trousers')
@@ -113,12 +114,20 @@ def add_product():
             content=form.content.data,
             price=form.price.data,
             category=form.category.data,
-            user_id=current_user.id
+            user_id=current_user.id,
+            image=form.image.data
         )
         db_sess.add(product)
         db_sess.commit()
         return redirect('/home')
     return render_template('add_product.html', title='Добавьте новый продукт', form=form)
+
+
+@app.route('/basket')
+def basket():
+    db_sess = db_session.create_session()
+    liked = db_sess.query(Liked).filter(Liked.user_id == current_user.id)
+    return render_template('basket.html', liked=liked)
 
 
 @app.route('/logout')
