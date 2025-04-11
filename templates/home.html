@@ -13,16 +13,17 @@
 <header>
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#">KIRIESHKINA MARKET</a>
-        <a class="navbar-brand" href="/">На главную</a>
-        <p>
-            <a class="btn btn-danger " href="/logout">Выйти из аккаунта</a>
-        </p>
+        <a class="btn btn-outline-primary" href="/">На главную</a>
+        <a class="btn btn-outline-success" href="/basket">Корзина</a>
+        <a class="btn btn-outline-danger" href="/logout">Выйти из аккаунта</a>
     </nav>
 </header>
     <div class="home">
         <h1><mark>Имя:</mark> {{ name }}</h1>
         <h1><mark>Почта:</mark> {{ email }}</h1>
-        <h2>{{ about }}</h2>
+        {% if current_user.about %}
+            <h1><mark>О себе:</mark> {{ about }}</h1>
+        {% endif %}
     </div>
     <a href="/add_product">
         <div class="btn btn-outline-dark btn-lg">
@@ -31,25 +32,31 @@
     </a>
     <div class="my_products">
         <h2>
-            Ваши продукты:
+            <mark>Ваши продукты:</mark>
         </h2>
-        {% for item in products %}
-            <div class="card border-dark mb-3" style="max-width: 540px;">
-              <div class="row no-gutters">
-                <div class="col-md-4">
-                  <img src="" class="card-img" alt="Дефолт">
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ item.title }}</h5>
-                    <p class="card-text">Описание: {{ item.content }}</p>
-                    <p class="card-text">Цена: {{ item.price }}</p>
-                    <p class="card-text">Категория: {{ item.category }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-        {% endfor %}
+            {% for item in products %}
+                {% if not item in products %}
+                    <h2>
+                        Вы не добавили ни одного продукта
+                    </h2>
+                {% else %}
+                    <div class="card border-dark mb-3" style="max-width: 540px;">
+                      <div class="row no-gutters">
+                        <div class="col-md-4">
+                          <img src={{ item.image }} class="card-img" alt="Не получилось найти изображение">
+                        </div>
+                        <div class="col-md-8">
+                          <div class="card-body">
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <p class="card-text">Описание: {{ item.content }}</p>
+                            <p class="card-text">Цена: {{ item.price }}</p>
+                            <p class="card-text">Категория: {{ item.category }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
     </div>
 </body>
 </html>
