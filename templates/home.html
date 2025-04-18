@@ -24,39 +24,40 @@
         {% if current_user.about %}
             <h1><mark>О себе:</mark> {{ about }}</h1>
         {% endif %}
+        <h1>
+            <a href="/add_product">
+                <div class="btn btn-outline-dark btn-lg">
+                    Добавить новый продукт
+                </div>
+            </a>
+        </h1>
     </div>
-    <a href="/add_product">
-        <div class="btn btn-outline-dark btn-lg">
-            Добавить новый продукт
-        </div>
-    </a>
     <div class="my_products">
         <h2>
             <mark>Ваши продукты:</mark>
         </h2>
-            {% for item in products %}
-                {% if not item in products %}
-                    <h2>
-                        Вы не добавили ни одного продукта
-                    </h2>
-                {% else %}
-                    <div class="card border-dark mb-3" style="max-width: 540px;">
-                      <div class="row no-gutters">
-                        <div class="col-md-4">
-                          <img src={{ item.image }} class="card-img" alt="Не получилось найти изображение">
+            {% if products %}
+                {% for item in products %}
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="card" style="width: 18rem;">
+                                    <img src={{ item.image }} class="card-img-top" alt="Не получилось найти изображение">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ item.title }}</h5>
+                                        <p class="card-text">Описание: {{ item.content }}</p>
+                                        <p class="card-text">Категория: {{ item.category }}</p>
+                                        <p class="card-text">Цена: {{ item.price }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-100"></div>
                         </div>
-                        <div class="col-md-8">
-                          <div class="card-body">
-                            <h5 class="card-title">{{ item.title }}</h5>
-                            <p class="card-text">Описание: {{ item.content }}</p>
-                            <p class="card-text">Цена: {{ item.price }}</p>
-                            <p class="card-text">Категория: {{ item.category }}</p>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                {% endif %}
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                Вы не добавили ни одного продукта
+            {% endif %}
     </div>
 </body>
 </html>
