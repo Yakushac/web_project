@@ -2,21 +2,24 @@
 
 {% block content %}
     {% for item in all_products %}
-        <div class="card border-dark mb-3" style="max-width: 540px;">
-          <div class="row no-gutters">
-            <div class="col-md-4">
-              <img src={{ item.image }} class="card-img" alt="Не получилось найти изображение">
+        <div class="card" style="width: 18rem;">
+            <img src={{ item.image }} class="card-img-top" alt="Не получилось найти изображение">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.content }}</p>
+                <p class="card-text">{{ item.category }}</p>
+                <p class="card-text">{{ item.price }}</p>
+                <form method="post" action="{{ url_for('add_basket') }}">
+                    <input type="hidden" name="id" value="{{ item.id }}">
+                    <input type="hidden" name="title" value="{{ item.title }}">
+                    <input type="hidden" name="user_id" value="{{ current_user.id }}"> <!-- user_id -->
+                    <input type="hidden" name="content" value="{{ item.content }}">
+                    <input type="hidden" name="price" value="{{ item.price }}">
+                    <input type="hidden" name="image" value="{{ item.image }}">
+                    <input type="hidden" name="category" value="{{ item.category }}">
+                    <button type="submit" class="btn btn-outline-danger">Добавить в корзину</button>
+                </form>
             </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <h5 class="card-title">{{ item.title }}</h5>
-                  <p class="card-text">Описание: {{ item.content }}</p>
-                  <p class="card-text">Цена: {{ item.price }}</p>
-                  <p class="card-text">Категория: {{ item.category }}</p>
-                  <p class="card-text">Автор: {{ item.user.name }}</p>
-                </div>
-              </div>
-          </div>
         </div>
     {% endfor %}
 {% endblock %}
