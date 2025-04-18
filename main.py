@@ -1,4 +1,4 @@
-from flask import Flask, render_template, make_response, request, redirect
+from flask import Flask, render_template, make_response, request, redirect, url_for, flash
 from data import db_session
 from data.db_session import create_session
 from data.users import User
@@ -95,7 +95,7 @@ def home():
 @app.route("/")
 def main_page():
     db_sess = db_session.create_session()
-    products = db_sess.query(Products).filter(Products.is_private != True)
+    products = list(db_sess.query(Products).filter(Products.is_private != True))
     return render_template("main_page.html", all_products=products)
 
 
@@ -128,6 +128,27 @@ def basket():
     db_sess = db_session.create_session()
     liked = db_sess.query(Liked).filter(Liked.user_id == current_user.id)
     return render_template('basket.html', liked=liked)
+
+
+@app.route('/add_basket', methods=['GET', 'POST'])
+def add_basket():
+    if request.method == 'POST':
+        db_sess = db_session.create_session()
+        new_liked = Liked(
+            id=request.form.get('id'),
+            title=request.form.get('title'),
+            user_id=request.form.get('user_id'),
+            content=request.form.get('content'),
+            price=request.form.get('price'),
+            image=request.form.get('image'),
+            category=request.form.get('category'),
+        )
+        try:
+            db_sess.add(new_liked)
+            db_sess.commit()
+            return redirect('/')
+        except:
+            return redirect('/')
 
 
 @app.route('/logout')
