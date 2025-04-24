@@ -39,19 +39,21 @@
             {% if products %}
                 {% for item in products %}
                     <div class="container">
-                        <div class="row">
-                            <div class="col">
-                                <div class="card" style="width: 18rem;">
-                                    <img src={{ item.image }} class="card-img-top" alt="Не получилось найти изображение">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ item.title }}</h5>
-                                        <p class="card-text">Описание: {{ item.content }}</p>
-                                        <p class="card-text">Категория: {{ item.category }}</p>
-                                        <p class="card-text">Цена: {{ item.price }}</p>
+                        <div class="row justify-content-md-center">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="card" style="width: 18rem;">
+                                        <img src={{ item.image }} class="card-img-top" alt="Не получилось найти изображение">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ item.title }}</h5>
+                                            <p class="card-text">Описание: {{ item.content }}</p>
+                                            <p class="card-text">Категория: {{ item.category }}</p>
+                                            <p class="card-text">Цена: {{ item.price }}</p>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="w-100"></div>
                             </div>
-                            <div class="w-100"></div>
                         </div>
                     </div>
                 {% endfor %}
