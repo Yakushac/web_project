@@ -2,9 +2,10 @@ import datetime
 import sqlalchemy
 from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
+from flask_login import UserMixin
 
 
-class Products(SqlAlchemyBase):
+class Products(SqlAlchemyBase, UserMixin):
     __tablename__ = 'products'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
