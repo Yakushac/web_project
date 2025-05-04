@@ -10,6 +10,7 @@ class Ordered(SqlAlchemyBase, UserMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True)
+    product_id = sqlalchemy.Column(sqlalchemy.Integer)
     price = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
@@ -24,5 +25,7 @@ class Ordered(SqlAlchemyBase, UserMixin):
     size = sqlalchemy.Column(sqlalchemy.String)
     is_delivery_paid = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     payment_method = sqlalchemy.Column(sqlalchemy.String)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
 
     user = orm.relationship('User')
