@@ -6,8 +6,9 @@ from data.products import Products
 from data.liked_products import Liked
 from data.ordered_products import Ordered
 import datetime
-from data.login_form import LoginForm, RegisterForm, AddProduct, MakeAnOrder
+from data.login_form import LoginForm, RegisterForm, AddProduct, MakeAnOrder, SearchFilter
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask import abort
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -192,22 +193,35 @@ def basket():
 @app.route('/add_basket', methods=['GET', 'POST'])
 def add_basket():
     if request.method == 'POST':
-        db_sess = db_session.create_session()
-        new_liked = Liked(
-            id=request.form.get('id'),
-            title=request.form.get('title'),
-            user_id=request.form.get('user_id'),
-            content=request.form.get('content'),
-            price=request.form.get('price'),
-            image=request.form.get('image'),
-            category=request.form.get('category'),
-        )
-        try:
-            db_sess.add(new_liked)
-            db_sess.commit()
-            return redirect('/')
-        except:
-            return redirect('/')
+        if current_user.is_authenticated:
+            db_sess = db_session.create_session()
+            is_have = db_sess.query(Liked).filter(Liked.product_id == request.form.get('id'),
+                                                  Liked.user_id == current_user.id).all()
+            if not is_have:
+                new_liked = Liked(
+                    product_id=request.form.get('id'),
+                    title=request.form.get('title'),
+                    user_id=request.form.get('user_id'),
+                    content=request.form.get('content'),
+                    price=request.form.get('price'),
+                    image=request.form.get('image'),
+                    category=request.form.get('category'),
+                )
+                try:
+                    db_sess.add(new_liked)
+                    db_sess.commit()
+                    return redirect('/')
+                except:
+                    return redirect('/')
+            else:
+                return redirect('/notation')
+        else:
+            return redirect('/notation')
+
+
+@app.route('/notation')
+def notation():
+    return render_template("notation.html")
 
 
 @app.route('/make_an_order/<int:id>', methods=['GET', 'POST'])
@@ -215,30 +229,6 @@ def add_basket():
 def make_an_order(id):
     db_sess = db_session.create_session()
     form = MakeAnOrder()
-    # db_sess = db_session.create_session()
-    # order = make_an_order_1()
-    # if form2.validate_on_submit():
-    #     ordered = Ordered(
-    #         id=order[0],
-    #         title=order[1],
-    #         content=order[2],
-    #         price=order[3],
-    #         image=order[4],
-    #         category=order[5],
-    #         address=form2.address.data,
-    #         time=form2.time.data,
-    #         is_delivery_paid=form2.is_delivery_paid.data,
-    #         payment_method=form2.payment_method.data,
-    #         size=form2.size.data,
-    #         user_id=request.form.get('user_id')
-    #     )
-    #     try:
-    #         db_sess.add(ordered)
-    #         db_sess.commit()
-    #         return redirect('/ordered_products')
-    #     except:
-    #         return redirect('/')
-    # return render_template('make_an_order.html', title='Добавьте новый продукт', form=form2)
 
     if request.method == 'POST':
         if current_user.is_authenticated:
@@ -250,6 +240,7 @@ def make_an_order(id):
             payment_method = form.payment_method.data
 
             ordered_item = Ordered(
+                product_id=product.id,
                 title=product.title,
                 price=product.price,
                 content=product.content,
@@ -261,7 +252,8 @@ def make_an_order(id):
                 time=time,
                 size=size,
                 is_delivery_paid=is_delivery_paid,
-                payment_method=payment_method
+                payment_method=payment_method,
+                created_date=product.created_date
             )
 
             db_sess.add(ordered_item)
@@ -270,10 +262,108 @@ def make_an_order(id):
     return render_template('make_an_order.html', form=form)
 
 
+@app.route('/cancel_order/<int:id>', methods=['GET', 'POST'])
+@login_required
+def cancel_order(id):
+    db_sess = db_session.create_session()
+    products = db_sess.query(Ordered).filter(Ordered.id == id, Ordered.user_id == current_user.id).first()
+    if products:
+        db_sess.delete(products)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/ordered_products')
+
+
+@app.route('/delete_product/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_product(id):
+    db_sess = db_session.create_session()
+    products = db_sess.query(Products).filter(Products.id == id,
+                                              Products.user_id == current_user.id
+                                              ).first()
+    if products:
+        db_sess.delete(products)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/home')
+
+
+@app.route('/edit_product/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_product(id):
+    form = AddProduct()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        products = db_sess.query(Products).filter(Products.id == id,
+                                                  Products.user_id == current_user.id
+                                                  ).first()
+        if products:
+            form.title.data = products.title
+            form.content.data = products.content
+            form.image.data = products.image
+            form.price.data = products.price
+            form.category.data = products.category
+            form.is_private.data = products.is_private
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        products = db_sess.query(Products).filter(Products.id == id,
+                                                  Products.user_id == current_user.id
+                                                  ).first()
+        if products:
+            products.title = form.title.data
+            products.image = form.image.data
+            products.price = form.price.data
+            products.category = form.category.data
+            products.content = form.content.data
+            products.is_private = form.is_private.data
+            db_sess.commit()
+            return redirect('/home')
+        else:
+            abort(404)
+    return render_template('add_product.html',
+                           title='Изменить сведения о продукте',
+                           form=form
+                           )
+
+
 @app.route('/ordered_products')
 def ordered_products():
-    return """fdfsfdfsfsd"""
+    db_sess = db_session.create_session()
+    ordered = db_sess.query(Ordered).filter(Ordered.user_id == current_user.id)
+    return render_template('ordered_products.html', ordered=ordered)
 
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    form = SearchFilter()
+    if request.method == 'POST':
+        min_price = form.min_price.data
+        max_price = form.max_price.data
+        category = form.category.data
+        try:
+            min_and_max = " ".join([min_price, max_price, category])
+            return redirect(url_for('filtered', min_and_max=min_and_max))
+        except:
+            return redirect('/notation')
+    return render_template('search.html', form=form)
+
+
+@app.route('/filtered/<min_and_max>')
+def filtered(min_and_max):
+    try:
+        min_price = int(min_and_max.split(' ')[0])
+        max_price = int(min_and_max.split(' ')[1])
+        category = min_and_max.split(' ')[2]
+        db_sess = db_session.create_session()
+        filtered_products = db_sess.query(Products).filter(Products.price >= min_price,
+                                                           Products.price <= max_price, Products.category == category).all()
+        return render_template('main_page.html', all_products=filtered_products)
+    except:
+        return render_template('/notation')
 
 @app.route('/logout')
 def logout():
