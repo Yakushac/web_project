@@ -7,8 +7,8 @@ from .db_session import SqlAlchemyBase
 class Liked(SqlAlchemyBase):
     __tablename__ = 'liked'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    product_id = sqlalchemy.Column(sqlalchemy.Integer)
     price = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
@@ -18,4 +18,5 @@ class Liked(SqlAlchemyBase):
                                 sqlalchemy.ForeignKey("users.id"))
     category = sqlalchemy.Column(sqlalchemy.String, default='Общее')
     image = sqlalchemy.Column(sqlalchemy.String)
+
     user = orm.relationship('User')
