@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% for item in ordered %}
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="card text-center">
+            <div class="card-header">
+                <img src={{ item.image }} class="card-img-top" style="max-width: 250px"
+                     alt="Не получилось найти изображение">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.content }}</p>
+                <p class="card-text">Категория: {{ item.category }}</p>
+                <p class="card-text">Цена: {{ item.price }}</p>
+                <a class="btn btn-outline-dark" href="{{ url_for('cancel_order', id=item.id) }}">Отменить заказ</a>
+            </div>
+            <div class="card-footer text-muted">
+                Дата создания: {{ item.created_date }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}
