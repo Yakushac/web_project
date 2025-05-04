@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Домашняя страница</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}"/>
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
@@ -15,51 +15,64 @@
         <a class="navbar-brand" href="#">KIRIESHKINA MARKET</a>
         <a class="btn btn-outline-primary" href="/">На главную</a>
         <a class="btn btn-outline-success" href="/basket">Корзина</a>
+        <a class="btn btn-outline-info" href="/ordered_products">Заказы</a>
         <a class="btn btn-outline-danger" href="/logout">Выйти из аккаунта</a>
     </nav>
 </header>
-    <div class="home">
-        <h1><mark>Имя:</mark> {{ name }}</h1>
-        <h1><mark>Почта:</mark> {{ email }}</h1>
-        {% if current_user.about %}
-            <h1><mark>О себе:</mark> {{ about }}</h1>
-        {% endif %}
-        <h1>
-            <a href="/add_product">
-                <div class="btn btn-outline-dark btn-lg">
-                    Добавить новый продукт
+<div class="home">
+    <h1>
+        <mark>Имя:</mark>
+        {{ name }}
+    </h1>
+    <h1>
+        <mark>Почта:</mark>
+        {{ email }}
+    </h1>
+    {% if current_user.about %}
+    <h1>
+        <mark>О себе:</mark>
+        {{ about }}
+    </h1>
+    {% endif %}
+    <h1>
+        <a href="/add_product">
+            <div class="btn btn-outline-dark btn-lg">
+                Добавить новый продукт
+            </div>
+        </a>
+    </h1>
+</div>
+<div class="my_products">
+    <h2>
+        <mark>Ваши продукты:</mark>
+    </h2>
+    {% if products %}
+    {% for item in products %}
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="card text-center">
+                <div class="card-header">
+                    <img src={{ item.image }} class="card-img-top" style="max-width: 250px"
+                         alt="Не получилось найти изображение">
                 </div>
-            </a>
-        </h1>
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.title }}</h5>
+                    <p class="card-text">{{ item.content }}</p>
+                    <p class="card-text">Категория: {{ item.category }}</p>
+                    <p class="card-text">Цена: {{ item.price }}</p>
+                    <a class="btn btn-outline-success" href="{{ url_for('edit_product', id=item.id) }}">Изменить</a>
+                    <a class="btn btn-outline-danger" href="{{ url_for('delete_product', id=item.id) }}">Удалить</a>
+                </div>
+                <div class="card-footer text-muted">
+                    Дата создания: {{ item.created_date }}
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="my_products">
-        <h2>
-            <mark>Ваши продукты:</mark>
-        </h2>
-            {% if products %}
-                {% for item in products %}
-                    <div class="container">
-                        <div class="row justify-content-md-center">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="card" style="width: 18rem;">
-                                        <img src={{ item.image }} class="card-img-top" alt="Не получилось найти изображение">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ item.title }}</h5>
-                                            <p class="card-text">Описание: {{ item.content }}</p>
-                                            <p class="card-text">Категория: {{ item.category }}</p>
-                                            <p class="card-text">Цена: {{ item.price }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="w-100"></div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                Вы не добавили ни одного продукта
-            {% endif %}
-    </div>
+    {% endfor %}
+    {% else %}
+    Вы не добавили ни одного продукта
+    {% endif %}
+</div>
 </body>
 </html>
