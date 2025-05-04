@@ -29,7 +29,16 @@ class AddProduct(FlaskForm):
     is_private = BooleanField('Сделать продукт приватным:')
     price = StringField('Цена', default='0')
     image = StringField('Ссылка на изображение:', validators=[DataRequired()])
-    submit = SubmitField('Добавить')
+    submit = SubmitField('Подтвердить')
+
+
+class SearchFilter(FlaskForm):
+    min_price = StringField('Минимальная цена', validators=[DataRequired()])
+    max_price = StringField('Максимальная цена', validators=[DataRequired()])
+    category = SelectField("Категория", choices=['Футболки', 'Свитшоты', 'Толстовки', 'Брюки', 'Джинсы',
+                                                 'Кроссовки', 'Туфли', 'Головные уборы', 'Бижутерия', 'Общее'],
+                           validators=[DataRequired()])
+    submit = SubmitField('Отфильтровать')
 
 
 class MakeAnOrder(FlaskForm):
