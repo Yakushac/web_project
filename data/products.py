@@ -21,4 +21,5 @@ class Products(SqlAlchemyBase, UserMixin):
                                 sqlalchemy.ForeignKey("users.id"))
     category = sqlalchemy.Column(sqlalchemy.String, default='Общее')
     image = sqlalchemy.Column(sqlalchemy.String)
+
     user = orm.relationship('User')
