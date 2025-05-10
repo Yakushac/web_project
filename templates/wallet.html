@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="wallet">
+    <h2>
+        <a class="btn btn-outline-dark" href="{{ url_for('add_card') }}">Добавить карту</a>
+    </h2>
+    <h2>Ваши банковские карты:</h2>
+    {% if not your_cards %}
+    <h3>Вы не добавили ни одной карты</h3>
+    {% else %}
+    {% for card in your_cards %}
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="card text-center">
+                <div class="card-body">
+                    <p class="card-text">Номер: {{ card.number }}</p>
+                    <p class="card-text">Срок действия: {{ card.expiration_date }}</p>
+                    <p class="card-text">CVC: {{ card.cvc }}</p>
+                    <a class="btn btn-outline-success" href="{{ url_for('edit_card', id=card.id) }}">
+                        Изменить
+                    </a>
+                    <a class="btn btn-outline-danger" href="{{ url_for('delete_card', id=card.id) }}">
+                        Удалить
+                    </a><br>
+                    <a class="btn btn-outline-primary" href="{{ url_for('top_up_balance', id=card.id) }}">
+                        Пополнить баланс
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock content %}
