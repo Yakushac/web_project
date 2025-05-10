@@ -1,5 +1,6 @@
 from flask import Flask, render_template, make_response, request, redirect, url_for, flash
 from data import db_session
+import os
 from data.db_session import create_session
 from data.users import User
 from data.products import Products
@@ -19,7 +20,8 @@ app.config['SECRET_KEY'] = 'sell_web_site'
 
 def main():
     db_session.global_init("db/sells.db")
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
 
 
 @login_manager.user_loader
