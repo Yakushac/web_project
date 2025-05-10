@@ -2,6 +2,9 @@
 
 {% block content %}
 <div class="basket">
+    {% if not liked %}
+    <h2 style="text-align: center">Вы не положили в корзину ни одного продукта</h2>
+    {% else %}
     {% for item in liked %}
     <div class="container">
         <div class="row justify-content-md-center">
@@ -18,6 +21,7 @@
                     <a class="btn btn-outline-warning"
                        href="{{ url_for('make_an_order', id=item.id) }}">Заказать
                     </a>
+                    <a class="btn btn-outline-danger" href="{{ url_for('delete_basket', id=item.id) }}">Удалить</a>
                 </div>
                 <div class="card-footer text-muted">
                     Дата создания: {{ item.created_date }}
@@ -26,5 +30,6 @@
         </div>
     </div>
     {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
