@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w-50 mx-auto">
+    <h1>{{ title }}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.number.label }}<br>
+            {{ form.number(class="form-control") }}<br>
+            {% for error in form.number.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+        <p>
+            {{ form.expiration_date.label }}<br>
+            {{ form.expiration_date(class="form-control") }}<br>
+            {% for error in form.expiration_date.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+        <p>
+            {{ form.cvc.label }}<br>
+            {{ form.cvc(class="form-control") }}<br>
+            {% for error in form.cvc.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        <p>
+            {{ form.submit(type="submit", class="btn btn-primary") }}
+        </p>
+        <div>
+            {{ message }}
+        </div>
+    </form>
+</div>
+{% endblock content %}
