@@ -36,7 +36,7 @@ class SearchFilter(FlaskForm):
     min_price = StringField('Минимальная цена', validators=[DataRequired()])
     max_price = StringField('Максимальная цена', validators=[DataRequired()])
     category = SelectField("Категория", choices=['Футболки', 'Свитшоты', 'Толстовки', 'Брюки', 'Джинсы',
-                                                 'Кроссовки', 'Туфли', 'Головные уборы', 'Бижутерия', 'Общее'],
+                                                 'Кроссовки', 'Туфли', 'Головные уборы', 'Бижутерия'],
                            validators=[DataRequired()])
     submit = SubmitField('Отфильтровать')
 
