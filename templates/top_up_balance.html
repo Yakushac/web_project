@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w-50 mx-auto">
+    <h1>{{ title }}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.balance.label }}<br>
+            {{ form.balance(class="form-control") }}<br>
+            {% for error in form.balance.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        </p>
+        <p>
+            {{ form.submit(type="submit", class="btn btn-primary") }}
+        </p>
+        <div>
+            {{ message }}
+        </div>
+    </form>
+</div>
+{% endblock content %}
