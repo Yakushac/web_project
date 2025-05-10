@@ -8,7 +8,7 @@ from data.liked_products import Liked
 from data.ordered_products import Ordered
 from data.cards import Cards
 from data.reviews import Reviews
-from data.login_form import LoginForm, RegisterForm, AddProduct, MakeAnOrder, SearchFilter, AddCard, Balance, MakeReview
+from data.form import LoginForm, RegisterForm, AddProduct, MakeAnOrder, SearchFilter, AddCard, Balance, MakeReview
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask import abort
 
