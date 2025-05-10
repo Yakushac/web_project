@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="card text-center">
+            <div class="card-header">
+                <img src={{ product.image }} class="card-img-top" style="max-width: 250px"
+                     alt="Не получилось найти изображение">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <p class="card-text">{{ product.content }}</p>
+                <p class="card-text">Категория: {{ product.category }}</p>
+                <p class="card-text">Цена: {{ product.price }}</p>
+                <a class="btn btn-outline-primary" href="{{ url_for('make_review', id=product.id) }}">
+                    Оставить отзыв
+                </a>
+            </div>
+            <div class="card-footer text-muted">
+                Дата создания: {{ product.created_date }}
+            </div>
+        </div>
+    </div>
+</div>
+{% for review in reviews %}
+<div class="card">
+    <div class="card-header">
+        {{ review.user.name }}
+    </div>
+    <div class="card-body">
+        <blockquote class="blockquote mb-0">
+            <p>{{ review.review }}</p>
+        </blockquote>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}
